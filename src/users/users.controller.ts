@@ -10,14 +10,16 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Public } from 'src/auth/is-public';
 
-@Controller('users')
+@Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Public()
+  @Post('auth/signup')
   create(@Body() createUserDto: CreateUserDto) {
-    // return this.usersService.create(createUserDto);
+    return this.usersService.create(createUserDto);
   }
 
   @Get(':id')
