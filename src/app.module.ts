@@ -12,11 +12,11 @@ import { PrismaService } from './prisma/prisma.service';
   controllers: [AppController],
   providers: [
     AppService,
-    PrismaService, 
+    PrismaService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    }
+    },
   ],
 })
 export class AppModule {}
