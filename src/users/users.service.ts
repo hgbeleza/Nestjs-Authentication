@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
@@ -12,39 +17,41 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const checkEmail = await this.prisma.user.findUnique({
       where: {
-        email: createUserDto.email
-      }
+        email: createUserDto.email,
+      },
     });
 
-    if(checkEmail) {
-      throw new HttpException({
-        status: HttpStatus.FORBIDDEN,
-        error: 'Email already exists',
-      }, HttpStatus.FORBIDDEN);
+    if (checkEmail) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'Email already exists',
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     const data: Prisma.UserCreateInput = {
       ...createUserDto,
-      password: await bcrypt.hash(createUserDto.password, 12)
-    }
+      password: await bcrypt.hash(createUserDto.password, 12),
+    };
 
-    const createdUser = await this.prisma.user.create({data});
+    const createdUser = await this.prisma.user.create({ data });
 
     return {
       ...createdUser,
-      password: undefined
+      password: undefined,
     };
   }
 
-  async findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<User> {    
     const emailExists = await this.prisma.user.findUnique({
       where: {
-        email: email
-      }
+        email: email,
+      },
     });
-
-    if(!emailExists) {
-      throw new NotFoundException('Invalid password or email');
+    if (!emailExists) {
+      throw new NotFoundException('Email not found');
     }
 
     return emailExists;
