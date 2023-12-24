@@ -26,7 +26,7 @@ export class UsersService {
     });
 
     if(!emailExists) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Invalid password or email');
     }
 
     return emailExists;

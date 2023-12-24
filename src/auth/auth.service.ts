@@ -13,7 +13,7 @@ export class AuthService {
   async signIn(email: string, pass: string) {
     const user = await this.usersService.findByEmail(email);
     if (user.password !== pass) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid password or email');
     }
     const payload = { sub: user.id, username: user.username };
     return {
