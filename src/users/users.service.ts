@@ -1,26 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-
-export type User = any;
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
-
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-    },
-  ];
 
   async create(createUserDto: CreateUserDto) {
     const data: Prisma.UserCreateInput = {
@@ -32,7 +18,17 @@ export class UsersService {
     return createdUser;
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
+  async findByEmail(email: string): Promise<User> {
+    const emailExists = await this.prisma.user.findUnique({
+      where: {
+        email: email
+      }
+    });
+
+    if(!emailExists) {
+      throw new NotFoundException('User not found');
+    }
+
+    return emailExists;
   }
 }
